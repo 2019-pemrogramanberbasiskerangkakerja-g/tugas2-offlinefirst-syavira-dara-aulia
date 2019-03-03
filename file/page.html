@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>LOGIN</title>
+	<script src="jquery-3.3.1.min.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(() => {
+  $('#readButton').click(() => {
+    const requestURL = 'users/' + $('#nameBox').val();
+    console.log('making ajax request to:', requestURL);
+    // From: http://learn.jquery.com/ajax/jquery-ajax-methods/
+    // Using the core $.ajax() method since it's the most flexible.
+    // ($.get() and $.getJSON() are nicer convenience functions)
+    $.ajax({
+      url: requestURL,
+      type: 'GET',
+      dataType : 'json', // this URL returns data in JSON format
+      success: (data) => {
+        console.log('You received some data!', data);
+        if (data.job && data.pass) {
+          $('#status').html('Successfully fetched data at URL: ' + requestURL); 
+          // $('#name').html('Welcome ' + data.name);
+          // $('#jobDiv').html('My job is ' + data.job);
+        } else {
+          $('#status').html('Error: could not find user at URL: ' + requestURL);
+        }
+      }
+    });
+  });
+  $('#allUsersButton').click(() => {
+    $.ajax({
+      url: 'users/',
+      type: 'GET',
+      dataType : 'json',
+      success: (data) => {
+        console.log('You received some data!', data);
+        $('#status').html('All user: ' + data);
+      }
+    });
+  });
+  $('#insertButton').click(() => {
+    $.ajax({
+      url: 'users',
+      type: 'POST',
+      data: {
+              name: $('#insertNameBox').val(),
+              job: $('#insertJobBox').val()
+            },
+      success: (data) => {
+        $('#status').html(data.message);
+      }
+    });
+  });
+  // define a generic Ajax error handler:
+  // http://api.jquery.com/ajaxerror/
+  $(document).ajaxError(() => {
+    $('#status').html('Error: check connection!');
+    // $('#status').html('Welcome ');
+  });
+});
+</script>
+</head>
+<body>
+  <h1>LOGIN PAGE</h1>
+Name: <input id="nameBox" type="text" size="20"/>
+Password: <input id="pass" type="password" size="20"/>
+
+  <button id="readButton">Login</button>
+  <!-- <button id="allUsersButton">Get all usernames</button> -->
+
+ <!--  <hr/>
+  Name: <input id="insertNameBox" type="text" size="20"/>
+  Job: <input id="insertJobBox" type="text" size="20"/>
+  <button id="insertButton">Insert into database</button>
+
+  <hr/> -->
+  <div id="status"></div>
+</body>
+</html>
